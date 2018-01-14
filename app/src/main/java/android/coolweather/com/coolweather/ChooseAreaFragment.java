@@ -1,5 +1,7 @@
 package android.coolweather.com.coolweather;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.coolweather.com.coolweather.db.City;
@@ -18,13 +20,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.litepal.crud.DataSupport;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -34,7 +33,7 @@ public class ChooseAreaFragment extends Fragment {
     public static final int LEVEL_PROVINCE =0;
     public static final int LEVEL_CITY =1;
     public static final int LEVEL_COUNTY =2;
-    private ProgressDialog progressDialog;
+    private ProgressDialog alertDialog;
     private TextView titleText;
     private Button backButton;
     private ListView listView;
@@ -50,8 +49,6 @@ public class ChooseAreaFragment extends Fragment {
     private Province selectedProvince;
     //选中的市
     private City selectedCity;
-    //选中的县
-    private County selectedCounty;
     //选中的级别
     private int currentLevel;
 
@@ -119,7 +116,7 @@ public class ChooseAreaFragment extends Fragment {
     private void queryCities(){
         titleText.setText(selectedProvince.getProvinceName());
         backButton.setVisibility(View.VISIBLE);
-        cityList = DataSupport.where("provinceid=?",String.valueOf(selectedProvince.getId())).find(City.class);
+        cityList = DataSupport.where("provinceId=?",String.valueOf(selectedProvince.getId())).find(City.class);
         if (cityList.size()>0){
             dataList.clear();
             for (City city : cityList){
@@ -156,7 +153,7 @@ public class ChooseAreaFragment extends Fragment {
     }
     //根据传入的地址和类型, 从服务器查询省市县数据
     private void queryFromServer(String address,final String type){
-             showProgressDialog();
+        showProgressDialog();
         HttpUtil.sendOkHttpRequest(address, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -171,14 +168,14 @@ public class ChooseAreaFragment extends Fragment {
             }
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                    String responseText =response.body().string();
-                    boolean result =false;
+                String responseText =response.body().string();
+                boolean result =false;
                 if ("province".equals(type)){
                     result = Utility.handleProvinceResponse(responseText);
                 }else if ("city".equals(type)){
                     result =Utility.handleCityResponse(responseText,selectedProvince.getId());
                 }else if ("county".equals(type)){
-                    result =Utility.handleCountyresponse(responseText,selectedCity.getId());
+                    result =Utility.handleCountyResponse(responseText,selectedCity.getId());
                 }
                 if (result){
                     getActivity().runOnUiThread(new Runnable() {
@@ -200,17 +197,17 @@ public class ChooseAreaFragment extends Fragment {
     }
     //显示进度对话框
     private void showProgressDialog(){
-        if (progressDialog == null){
-            progressDialog =new ProgressDialog(getActivity());
-            progressDialog.setMessage("正在加载...");
-            progressDialog.setCanceledOnTouchOutside(false);
+        if (alertDialog == null){
+            alertDialog =new ProgressDialog(getActivity());
+            alertDialog.setMessage("正在加载...");
+            alertDialog.setCanceledOnTouchOutside(false);
         }
-        progressDialog.show();
+        alertDialog.show();
     }
     //关闭进度对话框
     private void closeProgressDialog(){
-        if (progressDialog != null){
-            progressDialog.dismiss();
+        if (alertDialog != null){
+            alertDialog.dismiss();
         }
     }
 }
