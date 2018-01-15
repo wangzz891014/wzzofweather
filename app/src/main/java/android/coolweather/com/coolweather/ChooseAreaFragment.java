@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.coolweather.com.coolweather.db.City;
 import android.coolweather.com.coolweather.db.County;
 import android.coolweather.com.coolweather.db.Province;
@@ -59,10 +60,12 @@ public class ChooseAreaFragment extends Fragment {
         titleText =view.findViewById(R.id.title_text);
         backButton =view.findViewById(R.id.back_btn);
         listView =view.findViewById(R.id.list_view);
-        adapter =new ArrayAdapter<String>(getContext(),android.R.layout.simple_list_item_1,dataList);
+        adapter =new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,dataList);
         listView.setAdapter(adapter);
         return view;
     }
+
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -78,6 +81,12 @@ public class ChooseAreaFragment extends Fragment {
                     selectedCity =cityList.get(position);
                     Toast.makeText(getActivity(),cityList.get(position).getCityName(),Toast.LENGTH_SHORT).show();
                     queryCounties();
+                }else if (currentLevel == LEVEL_COUNTY){ //如果当前级别为 LEVEl_COuNTY 跳转到天气界面
+                    String weatherId = countyList.get(position).getWeatherId();
+                    Intent intent = new Intent(getActivity(),WeatherActivity.class);
+                    intent.putExtra("weather_id",weatherId );
+                    startActivity(intent);
+                    getActivity().finish();
                 }
             }
         });
@@ -195,6 +204,8 @@ public class ChooseAreaFragment extends Fragment {
             }
         });
     }
+
+
     //显示进度对话框
     private void showProgressDialog(){
         if (alertDialog == null){
