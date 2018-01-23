@@ -209,7 +209,7 @@ public class WeatherActivity extends Activity{
             sportText.setText(sport);
             weatherLayout.setVisibility(View.VISIBLE);
             //下面两行代码,执行自动更新天气
-            Intent intent = new Intent(this, AutoupdateService.class);
-             startActivity(intent);
+             Intent intent = new Intent(this, AutoupdateService.class);
+             startService(intent);
     }
 }

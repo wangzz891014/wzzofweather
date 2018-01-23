@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="android.coolweather.com.coolweather">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -24,7 +25,10 @@
         <service
             android:name=".service.AutoupdateService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true"
+            tools:ignore="ExportedService">
+
+        </service>
     </application>
 
 </manifest>
